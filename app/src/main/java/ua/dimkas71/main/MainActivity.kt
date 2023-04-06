@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import ua.dimkas71.ui.theme.ReadingsMetersOfElectricityTheme
 
@@ -31,13 +32,13 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun Greeting(name: String) {
-    Text(text = "Hello $name!")
+    Text(text = stringResource(id = R.string.hello, name))
 }
 
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
     ReadingsMetersOfElectricityTheme {
-        Greeting("Android")
+        Greeting("Dmytro")
     }
 }
