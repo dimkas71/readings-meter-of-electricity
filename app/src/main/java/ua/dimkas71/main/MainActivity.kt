@@ -2,10 +2,8 @@ package ua.dimkas71.main
 
 import android.os.Bundle
 import android.util.Log
-import android.widget.ImageButton
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -13,37 +11,22 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusManager
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.node.modifierElementOf
-import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.semantics.SemanticsProperties.ImeAction
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.OffsetMapping
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.input.TransformedText
-import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import ua.dimkas71.ui.theme.ReadingsMetersOfElectricityTheme
 
 class MainActivity : ComponentActivity() {
@@ -56,52 +39,21 @@ class MainActivity : ComponentActivity() {
         setContent {
             ReadingsMetersOfElectricityTheme {
 
-
-                // A surface container using the 'background' color from the theme
-                Scaffold(
-                    topBar = {
-                        TopAppBar(
-                            title = {Text("Electricity meters")},
-                            colors = TopAppBarDefaults.topAppBarColors(
-                                containerColor = MaterialTheme.colorScheme.primary,
-                                titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                                navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
-
-                            ),
-                            actions = {
-                                SearchField(
-                                    onSearch = { searchQuery ->
-                                        Log.d("MainActivity4", "You entered query: $searchQuery")
-                                    },
-                                    modifier = Modifier.fillMaxWidth()
-                                )
-                                IconButton(
-                                    onClick = {
-                                              /*TODO: Launch a SettingsActivity*/
-                                              },
-                                ) {
-                                    Icon(
-                                        Icons.Default.Settings,
-                                        contentDescription = null,
-                                        tint = MaterialTheme.colorScheme.onPrimary
-                                    )
-                                }
-                            }
-
+                val navController = rememberNavController()
+                NavHost(navController = navController, startDestination = "home") {
+                    composable("home") {
+                        MainScreen(navController)
+                    }
+                    composable("settings") {
+                        SettingsScreen(
+                            onUpClick = {
+                                navController.navigateUp()
+                            },
+                            modifier = Modifier.fillMaxSize()
                         )
                     }
-
-                ) {contentPadding ->
-                    LazyColumn(
-                        state = rememberLazyListState(),
-                        modifier = Modifier.padding(contentPadding)
-                    ) {
-                        items(10) { _ ->
-                            ContractScreen()
-                        }
-                    }
                 }
-            }
+
         }
     }
 }
@@ -315,4 +267,98 @@ fun SearchField(
             )
         }
     }
+}
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    fun MainScreen(
+        navController: NavController,
+        modifier: Modifier = Modifier
+    ) {
+        // A surface container using the 'background' color from the theme
+        Scaffold(
+            topBar = {
+                TopAppBar(
+                    title = { Text("Electricity meters") },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                        navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+
+                        ),
+                    actions = {
+                        SearchField(
+                            onSearch = { searchQuery ->
+                                Log.d("MainActivity4", "You entered query: $searchQuery")
+                            },
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                        IconButton(
+                            onClick = {
+                                navController.navigate("settings")
+                            },
+                        ) {
+                            Icon(
+                                Icons.Default.Settings,
+                                contentDescription = null,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
+                    }
+
+                )
+            }
+
+        ) { contentPadding ->
+            LazyColumn(
+                state = rememberLazyListState(),
+                modifier = Modifier.padding(contentPadding)
+            ) {
+                items(10) { _ ->
+                    ContractScreen()
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun SettingsScreen(
+    onUpClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Settings") },
+                navigationIcon = {
+                    IconButton(onClick = onUpClick) {
+                        Icon(
+                            Icons.Default.ArrowBack,
+                            contentDescription = null
+                        )
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary,
+
+                    ),
+            )
+        }
+    ) {contentPadding ->
+        Box(
+            modifier = modifier.padding(contentPadding)
+        ) {
+           Column {
+               Text("Group 1")
+               Spacer(modifier = Modifier.height(8.dp))
+               Text("Group 2")
+           }
+        }
+    }
+
+
 }
