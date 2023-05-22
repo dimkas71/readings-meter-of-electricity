@@ -1,14 +1,21 @@
 package ua.dimkas71.main
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Close
@@ -17,10 +24,19 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.OffsetMapping
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -28,6 +44,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ua.dimkas71.ui.theme.ReadingsMetersOfElectricityTheme
+
+
 
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
@@ -328,6 +346,49 @@ fun SettingsScreen(
     onUpClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+
+    val prefManager = LocalContext.current.getSharedPreferences("${LocalContext.current.applicationInfo.name}.prefs", Context.MODE_PRIVATE)
+    val uriTextValue = remember {
+        mutableStateOf(prefManager.getString("URI_KEY", "")?.let { TextFieldValue(it) } ?: TextFieldValue(""))
+    }
+
+    val userTextValue = remember {
+        mutableStateOf(prefManager.getString("USER_KEY", "")?.let{TextFieldValue(it)} ?: TextFieldValue(""))
+    }
+
+    val passwordTextValue = remember {
+        mutableStateOf(prefManager.getString("PASSWORD_KEY", "")?.let{TextFieldValue(it)} ?: TextFieldValue(""))
+    }
+
+    val searchOptions = enumValues<SearchVariant>()
+
+    val variantIndex = prefManager.getInt("SEARCH_VARIANT_KEY", 0) ?: 0
+
+    val (selectedOption, onOptionSelected) = remember {
+        mutableStateOf(searchOptions[variantIndex])
+    }
+
+    val datePickerState = rememberDatePickerState(
+        initialDisplayMode = DisplayMode.Input,
+        initialSelectedDateMillis = prefManager.getLong("START_DATE_BY_DEFAULT_KEY", 0L)?.let {
+            it
+        } ?: 0L
+    )
+
+    DisposableEffect(uriTextValue, userTextValue, passwordTextValue, datePickerState, selectedOption) {
+        onDispose {
+            prefManager.edit()
+                .apply() {
+                    putString("URI_KEY", uriTextValue.value.text)
+                    putString("USER_KEY", userTextValue.value.text)
+                    putString("PASSWORD_KEY", passwordTextValue.value.text)
+                    putLong("START_DATE_BY_DEFAULT_KEY", datePickerState.selectedDateMillis ?: 0L)
+                    putInt("SEARCH_VARIANT_KEY", selectedOption.ordinal)
+                    commit()
+                }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -352,10 +413,90 @@ fun SettingsScreen(
         Box(
             modifier = modifier.padding(contentPadding)
         ) {
-           Column {
-               Text("Group 1")
-               Spacer(modifier = Modifier.height(8.dp))
-               Text("Group 2")
+           Column(
+               modifier = Modifier.verticalScroll(rememberScrollState())
+           ) {
+               TextField(
+                   value = uriTextValue.value,
+                   onValueChange = { it ->
+                       uriTextValue.value = it
+                   },
+                   label = {
+                       Text("Connection Uri:")
+                   },
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .padding(8.dp)
+               )
+               TextField(
+                   value = userTextValue.value,
+                   onValueChange = {
+                    userTextValue.value = it
+               },
+                   label = {Text("User:")},
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp)
+                   )
+               TextField(
+                   value = passwordTextValue.value,
+                   onValueChange = {
+                       passwordTextValue.value = it
+                   },
+                    label = {
+                        Text("Password")
+                    },
+                   visualTransformation = PasswordVisualTransformation(),
+                   keyboardOptions = KeyboardOptions(
+                       keyboardType = KeyboardType.Password
+                   ),
+                   modifier = Modifier
+                       .fillMaxWidth()
+                       .padding(8.dp)
+                   )
+               Divider(
+                   modifier = Modifier
+                       .padding(start = 8.dp, end = 8.dp)
+                       .height(8.dp)
+               )
+               Text("Search variant:", style = MaterialTheme.typography.bodyLarge.merge(), modifier = Modifier.padding(start = 8.dp))
+               Column(modifier = Modifier.selectableGroup()) {
+                    searchOptions.forEach { variant ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(32.dp)
+                                .selectable(
+                                    selected = (variant == selectedOption),
+                                    onClick = {
+                                        onOptionSelected(variant)
+                                              },
+                                    role = Role.RadioButton
+                                )
+                                .padding(horizontal = 16.dp),
+                            verticalAlignment = CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (variant == selectedOption),
+                                onClick = null
+                            )
+                            Text(
+                                text = variant.text,
+                                style = MaterialTheme.typography.bodyMedium.merge(),
+                                modifier = Modifier.padding(start = 6.dp)
+                            )
+                        }
+                    }
+               }
+               Divider(modifier = Modifier
+                   .padding(start = 8.dp, end = 8.dp)
+                   .height(8.dp))
+                DatePicker(
+                    state = datePickerState,
+                    modifier = Modifier.padding(8.dp),
+                    title = {Text("Begin date for report")},
+                    )
+
            }
         }
     }
