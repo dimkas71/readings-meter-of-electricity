@@ -1,4 +1,4 @@
-package ua.dimkas71.main
+package ua.dimkas71.data
 
 data class MeterInfo(
     val uuid: String,
