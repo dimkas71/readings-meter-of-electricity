@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Readings meters of electricity</string>
     <string name="hello">Hello, %s</string>
+    <string name="loading_error_message">Network error. Data have not been loaded.</string>
 </resources>
