@@ -12,7 +12,7 @@ class DateConvertersTest {
     }
 
     @Test
-    fun firstJanuary20231672524000000ShouldBeReturned() {
-        assertEquals(1672524000000L, DateConverters.asLong("01.01.2023"))
+    fun firstJanuary2023_1672531200000_ShouldBeReturned() {
+        assertEquals(1672531200000L, DateConverters.asLong("01.01.2023"))
     }
 }
