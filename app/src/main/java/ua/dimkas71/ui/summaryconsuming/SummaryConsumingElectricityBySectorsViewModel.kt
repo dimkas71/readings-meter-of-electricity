@@ -3,6 +3,7 @@ package ua.dimkas71.ui.summaryconsuming
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +17,7 @@ import ua.dimkas71.data.SummaryConsumingBySectorsRepository
 
 import ua.dimkas71.common.Result
 import ua.dimkas71.main.R
+import javax.inject.Inject
 
 data class SummaryConsumingElectricityBySectorsUiState(
     val items: List<SummaryConsumingBySectors> = emptyList(),
@@ -23,9 +25,9 @@ data class SummaryConsumingElectricityBySectorsUiState(
     val errorMessageId: Int? = null
 )
 
-class SummaryConsumingElectricityBySectorsViewModel(
+@HiltViewModel
+class SummaryConsumingElectricityBySectorsViewModel @Inject constructor(
     private val summaryConsumingRepository: SummaryConsumingBySectorsRepository,
-    private val savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
     private val _isLoading = MutableStateFlow(false)

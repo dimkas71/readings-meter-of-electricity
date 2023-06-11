@@ -1,4 +1,4 @@
-package ua.dimkas71.main
+package ua.dimkas71
 
 import android.os.Bundle
 import android.util.Log
@@ -29,6 +29,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ua.dimkas71.data.ContractInfo
 import ua.dimkas71.data.MeterInfo
+import ua.dimkas71.main.R
 import ua.dimkas71.ui.settings.SettingsScreen
 import ua.dimkas71.ui.summaryconsuming.SummaryConsumingElectricityBySectorsScreen
 import ua.dimkas71.ui.theme.ReadingsMetersOfElectricityTheme

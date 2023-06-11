@@ -16,13 +16,13 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.collect
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SummaryConsumingElectricityBySectorsScreen(
     onUpClick: () -> Unit,
-    viewModel: SummaryConsumingElectricityBySectorsViewModel = SummaryConsumingElectricityBySectorsViewModel(),
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -52,7 +52,6 @@ fun SummaryConsumingElectricityBySectorsScreen(
         Box(modifier = modifier.padding(contentPadding)) {
             Text("Meters by sectors screen")
 
-            Log.d("SummaryScreen", viewModel.demo(LocalContext.current).toString())
         }
     }
 }

@@ -18,7 +18,7 @@ import ua.dimkas71.data.SummaryConsumingBySectors
 interface CounterServiceApi {
 
     @GET("consuming")
-    suspend fun getSummaryConsuming(@Query("period") period: String): SummaryConsumingBySectors
+    suspend fun getSummaryConsuming(@Query("period") period: String): List<SummaryConsumingBySectors>
 
     companion object {
 
