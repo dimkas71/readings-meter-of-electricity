@@ -25,45 +25,7 @@ data class SummaryConsumingElectricityBySectorsUiState(
     val errorMessageId: Int? = null
 )
 
-@HiltViewModel
-class SummaryConsumingElectricityBySectorsViewModel @Inject constructor(
-    private val summaryConsumingRepository: SummaryConsumingBySectorsRepository,
-) : ViewModel() {
-
-    private val _isLoading = MutableStateFlow(false)
-    private val _errorMessageId: MutableStateFlow<Int?> = MutableStateFlow(null)
-    private val _items = summaryConsumingRepository.getSummaryConsuming().map {
-        Result.Success(it)
-    }.catch<Result<List<SummaryConsumingBySectors>>>{emit(Result.Error("Error at loading"))}
-
-    val uiState: StateFlow<SummaryConsumingElectricityBySectorsUiState> =
-        combine(_isLoading, _items) { isLoading, items ->
-            when (items) {
-                Result.Loading -> {
-                    SummaryConsumingElectricityBySectorsUiState(isLoading = true)
-                }
-
-                is Result.Error -> {
-                    SummaryConsumingElectricityBySectorsUiState(errorMessageId = R.string.loading_error_message)
-                }
-                is Result.Success -> {
-                    SummaryConsumingElectricityBySectorsUiState(
-                        items = items.data,
-                        isLoading = isLoading,
-                        errorMessageId = null
-                    )
-                }
-            }
-
-        }
-            .stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(5000L),
-                initialValue = SummaryConsumingElectricityBySectorsUiState(isLoading = true)
-            )
-
-
-
-
+//@HiltViewModel
+class SummaryConsumingElectricityBySectorsViewModel() {
 
 }

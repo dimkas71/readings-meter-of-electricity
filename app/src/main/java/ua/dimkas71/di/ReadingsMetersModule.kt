@@ -19,7 +19,7 @@ object ReadingsMetersModule {
     }
 
     @Provides
-    fun providesDatabaseSource(db: AppDatabase): LocalSummaryConsumingBySectorsDao = db.getLocalSummaryConsumingBySectorsDao()
+    fun localSummaryConsumingBySectorsDao(db: AppDatabase): LocalSummaryConsumingBySectorsDao = db.getLocalSummaryConsumingBySectorsDao()
 
     @Provides
     fun providesDataBase(context: Context): AppDatabase = AppDatabase.getDatabase(context)
