@@ -47,9 +47,8 @@ import kotlin.random.Random
 fun SummaryConsumingElectricityBySectorsPreview(
     list: List<SummaryConsumingBySectors> = (1..8).map {
         SummaryConsumingBySectors(
-            "01.04.2023",
             it,
-            (Random.nextDouble(1_000.0, 100_000.0) * 100.0).roundToInt() / 100.0)
+            Random.nextLong(1_000, 100_000))
     },
     modifier: Modifier = Modifier
 
