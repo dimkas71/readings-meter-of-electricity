@@ -13,6 +13,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.ReadingsMetersOfElectricity"
+        android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
             android:name="ua.dimkas71.MainActivity"
