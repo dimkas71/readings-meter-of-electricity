@@ -25,8 +25,8 @@ interface CounterServiceApi {
         fun service(context: Context): CounterServiceApi {
             val prefManager = getSharedPreferences(context)
 
-            val baseUri = prefManager.getString(URI_KEY, "")
-            val user = prefManager.getString(USER_KEY, "")
+            val baseUri = prefManager.getString(URI_KEY, "http://194.44.128.108:9090/demo/hs/")
+            val user = prefManager.getString(USER_KEY, "service")
             val password = prefManager.getString(PASSWORD_KEY, "")
 
             val client = OkHttpClient.Builder()

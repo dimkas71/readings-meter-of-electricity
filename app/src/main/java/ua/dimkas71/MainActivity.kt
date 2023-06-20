@@ -23,28 +23,32 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import dagger.hilt.android.AndroidEntryPoint
 import ua.dimkas71.data.ContractInfo
 import ua.dimkas71.data.MeterInfo
 import ua.dimkas71.main.R
 import ua.dimkas71.ui.settings.SettingsScreen
 import ua.dimkas71.ui.summaryconsuming.SummaryConsumingElectricityBySectorsScreen
+import ua.dimkas71.ui.summaryconsuming.SummaryConsumingElectricityBySectorsViewModel
 import ua.dimkas71.ui.theme.ReadingsMetersOfElectricityTheme
 
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
-
         setContent {
             ReadingsMetersOfElectricityTheme {
 
+                val viewModel = hiltViewModel<SummaryConsumingElectricityBySectorsViewModel>()
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") {
@@ -52,6 +56,7 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("summary") {
                         SummaryConsumingElectricityBySectorsScreen(
+                            viewModel,
                             onUpClick = {
                                 navController.navigateUp()
                             },
