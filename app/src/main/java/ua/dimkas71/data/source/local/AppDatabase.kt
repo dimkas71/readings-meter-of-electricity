@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 
-@Database(entities = [LocalSummaryConsumingBySectors::class], version = 1, exportSchema = false)
+@Database(entities = [LocalSummaryConsumingBySectors::class], version = 2, exportSchema = false)
 abstract class AppDatabase: RoomDatabase() {
     abstract fun getLocalSummaryConsumingBySectorsDao(): LocalSummaryConsumingBySectorsDao
 
@@ -18,6 +18,7 @@ abstract class AppDatabase: RoomDatabase() {
                     context,
                     AppDatabase::class.java,
                     "app_database")
+                    .fallbackToDestructiveMigration()
                     .build()
 
                 INSTANCE = instance
